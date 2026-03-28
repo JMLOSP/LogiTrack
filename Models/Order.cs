@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Logitrack.Models
+namespace LogiTrack.Models
 {
   public class Order
   {

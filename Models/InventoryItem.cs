@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Logitrack.Models
+namespace LogiTrack.Models
 {
   public class InventoryItem
   {

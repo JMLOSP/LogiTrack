@@ -1,6 +1,6 @@
 # LogiTrack
 [![Build LogiTrack](https://github.com/JMLOSP/LogiTrack/actions/workflows/build.yml/badge.svg?branch=develop)](https://github.com/JMLOSP/LogiTrack/actions/workflows/build.yml)
-[![Build LogiTrack](https://github.com/JMLOSP/LogiTrack/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/JMLOSP/LogiTrack/actions/workflows/build.yml)
+[![Build LogiTrack](https://github.com/JMLOSP/LogiTrack/actions/workflows/build.yml/badge.svg)](https://github.com/JMLOSP/LogiTrack/actions/workflows/build.yml)
 
 Order Management System for LogiTrack, a logistics software platform.
 

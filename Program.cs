@@ -19,7 +19,7 @@ internal class Program
 
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
-
+    builder.Services.AddMemoryCache();
     builder.Services.AddDbContext<LogiTrackContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("LogiTrackConnection")));
     builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<LogiTrackContext>().AddDefaultTokenProviders();
 

@@ -3,6 +3,7 @@ using LogiTrack.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace LogiTrack.Controllers
 {
@@ -12,17 +13,19 @@ namespace LogiTrack.Controllers
   public class OrderController : ControllerBase
   {
     private readonly LogiTrackContext _context;
+    private readonly IMemoryCache _cache;
 
-    public OrderController(LogiTrackContext context)
+    public OrderController(LogiTrackContext context, IMemoryCache cache)
     {
       _context = context;
+      _cache = cache;
     }
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Order>>> GetOrders()
     {
       //retrieve all orders from the database, including their associated inventory items, and return them as a list
-      List<Order> orders = await _context.Orders.Include(order => order.Items).ToListAsync();
+      List<Order> orders = await _context.Orders.AsNoTracking().Include(o => o.Items).ThenInclude(oi => oi.ItemId).ToListAsync();
 
       return Ok(orders);
     }
@@ -31,7 +34,7 @@ namespace LogiTrack.Controllers
     public async Task<ActionResult<Order>> GetOrderById(int id)
     {
       //retrieve a specific order by its ID, including its associated inventory items, and return it
-      Order? order = await _context.Orders.Include(currentOrder => currentOrder.Items).FirstOrDefaultAsync(currentOrder => currentOrder.OrderId == id);
+      Order? order = await _context.Orders.AsNoTracking().Include(o => o.Items).ThenInclude(oi => oi.ItemId).FirstOrDefaultAsync(o => o.OrderId == id);
 
       //if the order is not found, return a 404 Not Found response
       if (order == null)
@@ -44,28 +47,32 @@ namespace LogiTrack.Controllers
     [Authorize(Roles = "Manager")]
     public async Task<ActionResult<Order>> CreateOrder(CreateOrderRequest request)
     {
-      //validate the incoming order data and create a new order in the database
+      // validate the incoming order data and create a new order in the database
       if (request == null)
         return BadRequest("Request cannot be null.");
 
-      //create a new order object and populate it with the provided data
+      // create a new order object and populate it with the provided data
       Order order = new Order
       {
         CustomerName = request.CustomerName,
         DatePlaced = request.DatePlaced
       };
 
-      //if item IDs are provided, validate them and associate the corresponding inventory items with the new order
+      // if item IDs are provided, validate them and associate the corresponding inventory items with the new order
       if (request.ItemIds != null && request.ItemIds.Count > 0)
       {
-        //retrieve the inventory items corresponding to the provided item IDs from the database
-        List<InventoryItem> items = await _context.InventoryItems.Where(item => request.ItemIds.Contains(item.ItemId)).ToListAsync();
+        List<int> distinctItemIds = request.ItemIds.Distinct().ToList();
 
-        //if any of the provided item IDs are invalid (i.e., do not correspond to existing inventory items), return a 400 Bad Request response
-        if (items.Count != request.ItemIds.Count)
+        // retrieve the inventory items corresponding to the provided item IDs from the database
+        List<InventoryItem> items = await _context.InventoryItems
+          .Where(item => distinctItemIds.Contains(item.ItemId))
+          .ToListAsync();
+
+        // if any of the provided item IDs are invalid (i.e., do not correspond to existing inventory items), return a 400 Bad Request response
+        if (items.Count != distinctItemIds.Count)
           return BadRequest("One or more inventory item IDs are invalid.");
 
-        //associate the retrieved inventory items with the new order, ensuring that they are not already associated with another order
+        // associate the retrieved inventory items with the new order, ensuring that they are not already associated with another order
         foreach (InventoryItem item in items)
         {
           if (item.OrderId != null)
@@ -77,6 +84,8 @@ namespace LogiTrack.Controllers
 
       _context.Orders.Add(order);
       await _context.SaveChangesAsync();
+
+      _cache.Remove(InventoryController.InventoryCacheKey);
 
       return CreatedAtAction(nameof(GetOrderById), new { id = order.OrderId }, order);
     }

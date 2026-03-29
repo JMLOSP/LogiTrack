@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace LogiTrack.Migrations
+namespace Logitrack.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration
@@ -43,7 +43,8 @@ namespace LogiTrack.Migrations
                         name: "FK_InventoryItems_Orders_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Orders",
-                        principalColumn: "OrderId");
+                        principalColumn: "OrderId",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateIndex(

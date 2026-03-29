@@ -11,5 +11,14 @@ namespace LogiTrack.Data
 
     public DbSet<InventoryItem> InventoryItems => Set<InventoryItem>();
     public DbSet<Order> Orders => Set<Order>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+      modelBuilder.Entity<Order>()
+        .HasMany(order => order.Items)
+        .WithOne(item => item.Order)
+        .HasForeignKey(item => item.OrderId)
+        .OnDelete(DeleteBehavior.SetNull);
+    }
   }
 }

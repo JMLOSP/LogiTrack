@@ -1,6 +1,121 @@
-@Logitrack_HostAddress = http://localhost:5141
+@baseUrl = http://localhost:5141
 
-GET {{Logitrack_HostAddress}}/weatherforecast/
+### ========================================
+### INVENTORY
+### ========================================
+
+### GET - Obtener todo el inventario
+GET {{baseUrl}}/api/inventory
+Accept: application/json
+
+###
+
+### POST - Crear item de inventario (1)
+POST {{baseUrl}}/api/inventory
+Content-Type: application/json
+
+{
+  "name": "Laptop",
+  "quantity": 5,
+  "location": "Aisle 1"
+}
+
+###
+
+### POST - Crear item de inventario (2)
+POST {{baseUrl}}/api/inventory
+Content-Type: application/json
+
+{
+  "name": "Mouse",
+  "quantity": 20,
+  "location": "Aisle 2"
+}
+
+###
+
+### POST - Crear item de inventario (3)
+POST {{baseUrl}}/api/inventory
+Content-Type: application/json
+
+{
+  "name": "Keyboard",
+  "quantity": 10,
+  "location": "Aisle 3"
+}
+
+###
+
+### GET - Ver inventario tras inserts
+GET {{baseUrl}}/api/inventory
+Accept: application/json
+
+###
+
+### DELETE - Borrar item inventario (ej: ID 3)
+DELETE {{baseUrl}}/api/inventory/3
+
+###
+
+### ========================================
+### ORDERS
+### ========================================
+
+### GET - Obtener todos los pedidos
+GET {{baseUrl}}/api/orders
+Accept: application/json
+
+###
+
+### POST - Crear pedido con varios items
+POST {{baseUrl}}/api/orders
+Content-Type: application/json
+
+{
+  "customerName": "Juanma",
+  "datePlaced": "2026-03-29T12:00:00",
+  "itemIds": [1, 2]
+}
+
+###
+
+### GET - Ver pedidos tras crear
+GET {{baseUrl}}/api/orders
+Accept: application/json
+
+###
+
+### GET - Obtener pedido por ID
+GET {{baseUrl}}/api/orders/1
+Accept: application/json
+
+###
+
+### POST - Intentar crear pedido con item ya asignado (debe fallar)
+POST {{baseUrl}}/api/orders
+Content-Type: application/json
+
+{
+  "customerName": "Cliente Test",
+  "datePlaced": "2026-03-29T13:00:00",
+  "itemIds": [1]
+}
+
+###
+
+### DELETE - Borrar pedido (ID 1)
+DELETE {{baseUrl}}/api/orders/1
+
+###
+
+### GET - Ver pedidos después de borrar
+GET {{baseUrl}}/api/orders
+Accept: application/json
+
+###
+
+### GET - Ver inventario tras borrar pedido (items deben seguir pero sin OrderId)
+GET {{baseUrl}}/api/inventory
 Accept: application/json
 
 ###

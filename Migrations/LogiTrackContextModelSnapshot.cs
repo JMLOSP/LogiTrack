@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace LogiTrack.Migrations
+namespace Logitrack.Migrations
 {
     [DbContext(typeof(LogiTrackContext))]
     partial class LogiTrackContextModelSnapshot : ModelSnapshot
@@ -69,7 +69,8 @@ namespace LogiTrack.Migrations
                 {
                     b.HasOne("LogiTrack.Models.Order", "Order")
                         .WithMany("Items")
-                        .HasForeignKey("OrderId");
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Order");
                 });

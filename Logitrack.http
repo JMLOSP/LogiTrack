@@ -130,7 +130,7 @@ Authorization: Bearer {{token}}
 ###
 
 ### GET - Obtener pedido por ID
-GET {{LogiTrack_HostAddress}}/api/orders/1
+GET {{LogiTrack_HostAddress}}/api/orders/3
 Accept: application/json
 Authorization: Bearer {{token}}
 
@@ -150,7 +150,7 @@ Authorization: Bearer {{token}}
 ###
 
 ### DELETE - Borrar pedido (ID 1) - Manager
-DELETE {{LogiTrack_HostAddress}}/api/orders/1
+DELETE {{LogiTrack_HostAddress}}/api/orders/2
 Authorization: Bearer {{token}}
 
 ###

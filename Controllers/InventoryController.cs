@@ -45,6 +45,8 @@ namespace LogiTrack.Controllers
       //add a custom header to the response indicating how long it took to retrieve the inventory list, which can be useful for monitoring and debugging purposes
       Response.Headers["X-Elapsed-Milliseconds"] = stopwatch.ElapsedMilliseconds.ToString();
 
+      Console.WriteLine($"GetInventoryItems executed in {stopwatch.ElapsedMilliseconds} ms");
+
       return Ok(inventoryItems);
     }
 
@@ -52,6 +54,8 @@ namespace LogiTrack.Controllers
     [Authorize(Roles = "Manager")]
     public async Task<ActionResult<InventoryItem>> CreateInventoryItem(InventoryItem item)
     {
+      Stopwatch stopwatch = Stopwatch.StartNew();
+
       //validate the incoming inventory item data
       if (item == null)
         return BadRequest("Inventory item cannot be null.");
@@ -63,6 +67,11 @@ namespace LogiTrack.Controllers
       //invalidate the inventory list cache to ensure that subsequent requests will retrieve the updated list from the database
       _cache.Remove(InventoryCacheKey);
 
+      //add a custom header to the response indicating how long it took to retrieve the inventory list, which can be useful for monitoring and debugging purposes
+      Response.Headers["X-Elapsed-Milliseconds"] = stopwatch.ElapsedMilliseconds.ToString();
+
+      Console.WriteLine($"CreateInventoryItem executed in {stopwatch.ElapsedMilliseconds} ms");
+
       //return the created inventory item with a 201 Created status code
       return CreatedAtAction(nameof(GetInventory), new { id = item.ItemId }, item);
     }
@@ -71,6 +80,8 @@ namespace LogiTrack.Controllers
     [Authorize(Roles = "Manager")]
     public async Task<IActionResult> DeleteInventoryItem(int id)
     {
+      Stopwatch stopwatch = Stopwatch.StartNew();
+
       //find the inventory item by id and remove it from the database
       InventoryItem? item = await _context.InventoryItems.FindAsync(id);
 
@@ -84,6 +95,11 @@ namespace LogiTrack.Controllers
 
       //invalidate the inventory list cache to ensure that subsequent requests will retrieve the updated list from the database
       _cache.Remove(InventoryCacheKey);
+
+      //add a custom header to the response indicating how long it took to retrieve the inventory list, which can be useful for monitoring and debugging purposes
+      Response.Headers["X-Elapsed-Milliseconds"] = stopwatch.ElapsedMilliseconds.ToString();
+
+      Console.WriteLine($"DeleteInventoryItem executed in {stopwatch.ElapsedMilliseconds} ms");
 
       //return a 204 No Content response to indicate successful deletion
       return NoContent();

@@ -7,6 +7,10 @@ Order Management System for LogiTrack, a logistics software platform.
 - Entity Framework Core
 - SQLite
 
+## Database
+SQLite database is created via EF Core migrations.
+Database files are excluded from source control.
+
 ## Features in Part 1
 - Inventory item model
 - Order model
@@ -24,4 +28,4 @@ Order Management System for LogiTrack, a logistics software platform.
 ```bash
 dotnet restore
 dotnet ef database update
-dotnet run
+dotnet 

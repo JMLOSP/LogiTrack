@@ -23,7 +23,7 @@ jobs:
           dotnet-quality: 'preview'
 
       - name: Restore dependencies
-        run: dotnet restore ./LogiTrack.sln
+        run: dotnet restore ./Logitrack.sln
 
       - name: Build
-        run: dotnet build ./LogiTrack.sln --no-restore --configuration Release
+        run: dotnet build ./Logitrack.sln --no-restore --configuration Release

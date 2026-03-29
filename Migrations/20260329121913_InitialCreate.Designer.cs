@@ -8,10 +8,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace LogiTrack.Migrations
+namespace Logitrack.Migrations
 {
     [DbContext(typeof(LogiTrackContext))]
-    [Migration("20260328160151_InitialCreate")]
+    [Migration("20260329121913_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -72,7 +72,8 @@ namespace LogiTrack.Migrations
                 {
                     b.HasOne("LogiTrack.Models.Order", "Order")
                         .WithMany("Items")
-                        .HasForeignKey("OrderId");
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Order");
                 });

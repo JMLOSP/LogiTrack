@@ -1,6 +1,168 @@
-@Logitrack_HostAddress = http://localhost:5141
+@LogiTrack_HostAddress = http://localhost:5141
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjFhN2Y4NzA5LWY5YWEtNDdiNC1hYWNjLWNhMjYwZjE4MTAzMiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJtYW5hZ2VyQGxvZ2l0cmFjay5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJtYW5hZ2VyQGxvZ2l0cmFjay5jb20iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJNYW5hZ2VyIiwiZXhwIjoxNzc0ODE1MjU3LCJpc3MiOiJMb2dpVHJhY2siLCJhdWQiOiJMb2dpVHJhY2tVc2VycyJ9.zljs9KXo4YFQi8UgkLy1mrrNMEqG7wEnHCBCUHulsoI
 
-GET {{Logitrack_HostAddress}}/weatherforecast/
+### ========================================
+### 🔐 AUTH
+### ========================================
+
+### Register user
+POST {{LogiTrack_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "manager@logitrack.com",
+  "password": "Password123!"
+}
+
+### Login
+# ⚠️ Copia el token de la respuesta y pégalo abajo en @token
+POST {{LogiTrack_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "manager@logitrack.com",
+  "password": "Password123!"
+}
+
+### Assign role (Manager)
+POST {{LogiTrack_HostAddress}}/api/auth/assign-role?email=manager@logitrack.com&role=Manager
+
+### ========================================
+### 🚫 TEST SIN AUTENTICACIÓN (debe fallar)
+### ========================================
+
+### Inventory sin token → 401
+GET {{LogiTrack_HostAddress}}/api/inventory
+
+
+### ========================================
+### INVENTORY
+### ========================================
+
+### GET - Obtener todo el inventario
+GET {{LogiTrack_HostAddress}}/api/inventory
 Accept: application/json
+Authorization: Bearer {{token}}
 
 ###
+
+### POST - Crear item de inventario (1) - Manager
+POST {{LogiTrack_HostAddress}}/api/inventory
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Laptop",
+  "quantity": 5,
+  "location": "Aisle 1"
+}
+
+###
+
+### POST - Crear item de inventario (2) - Manager
+POST {{LogiTrack_HostAddress}}/api/inventory
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Mouse",
+  "quantity": 20,
+  "location": "Aisle 2"
+}
+
+###
+
+### POST - Crear item de inventario (3) - Manager
+POST {{LogiTrack_HostAddress}}/api/inventory
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Keyboard",
+  "quantity": 10,
+  "location": "Aisle 3"
+}
+
+###
+
+### GET - Ver inventario tras inserts
+GET {{LogiTrack_HostAddress}}/api/inventory
+Accept: application/json
+Authorization: Bearer {{token}}
+
+###
+
+### DELETE - Borrar item inventario (ej: ID 3) - Manager
+DELETE {{LogiTrack_HostAddress}}/api/inventory/3
+Authorization: Bearer {{token}}
+
+###
+
+### ========================================
+### ORDERS
+### ========================================
+
+### GET - Obtener todos los pedidos
+GET {{LogiTrack_HostAddress}}/api/orders
+Accept: application/json
+Authorization: Bearer {{token}}
+
+###
+
+### POST - Crear pedido con varios items
+POST {{LogiTrack_HostAddress}}/api/orders
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "customerName": "Juanma",
+  "datePlaced": "2026-03-29T12:00:00",
+  "itemIds": [1, 2]
+}
+
+###
+
+### GET - Ver pedidos tras crear
+GET {{LogiTrack_HostAddress}}/api/orders
+Accept: application/json
+Authorization: Bearer {{token}}
+
+###
+
+### GET - Obtener pedido por ID
+GET {{LogiTrack_HostAddress}}/api/orders/3
+Accept: application/json
+Authorization: Bearer {{token}}
+
+###
+
+### POST - Intentar crear pedido con item ya asignado (debe fallar)
+POST {{LogiTrack_HostAddress}}/api/orders
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "customerName": "Cliente Test",
+  "datePlaced": "2026-03-29T13:00:00",
+  "itemIds": [1]
+}
+
+###
+
+### DELETE - Borrar pedido (ID 1) - Manager
+DELETE {{LogiTrack_HostAddress}}/api/orders/2
+Authorization: Bearer {{token}}
+
+###
+
+### GET - Ver pedidos después de borrar
+GET {{LogiTrack_HostAddress}}/api/orders
+Accept: application/json
+Authorization: Bearer {{token}}
+
+###
+
+### GET - Ver inventario tras borrar pedido
+GET {{LogiTrack_HostAddress}}/api/inventory
+Accept: application/json
+Authorization: Bearer {{token}}

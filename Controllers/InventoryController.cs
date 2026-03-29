@@ -1,5 +1,6 @@
 ﻿using LogiTrack.Data;
 using LogiTrack.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,6 +8,7 @@ namespace LogiTrack.Controllers
 {
   [ApiController]
   [Route("api/inventory")]
+  [Authorize]
   public class InventoryController : ControllerBase
   {
     private readonly LogiTrackContext _context;
@@ -17,6 +19,7 @@ namespace LogiTrack.Controllers
     }
 
     [HttpGet]
+    [Authorize(Roles = "Manager")]
     public async Task<ActionResult<IEnumerable<InventoryItem>>> GetInventory()
     {
       //retrieve all inventory items from the database and return them as a list
@@ -26,6 +29,7 @@ namespace LogiTrack.Controllers
     }
 
     [HttpPost]
+    [Authorize(Roles = "Manager")]
     public async Task<ActionResult<InventoryItem>> CreateInventoryItem(InventoryItem item)
     {
       //validate the incoming inventory item data
@@ -41,6 +45,7 @@ namespace LogiTrack.Controllers
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Manager")]
     public async Task<IActionResult> DeleteInventoryItem(int id)
     {
       //find the inventory item by id and remove it from the database

@@ -1,5 +1,6 @@
 ﻿using LogiTrack.Data;
 using LogiTrack.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,6 +8,7 @@ namespace LogiTrack.Controllers
 {
   [ApiController]
   [Route("api/orders")]
+  [Authorize]
   public class OrderController : ControllerBase
   {
     private readonly LogiTrackContext _context;
@@ -39,6 +41,7 @@ namespace LogiTrack.Controllers
     }
 
     [HttpPost]
+    [Authorize(Roles = "Manager")]
     public async Task<ActionResult<Order>> CreateOrder(CreateOrderRequest request)
     {
       //validate the incoming order data and create a new order in the database
@@ -79,6 +82,7 @@ namespace LogiTrack.Controllers
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Manager")]
     public async Task<IActionResult> DeleteOrder(int id)
     {
       //find the order by id, including its associated inventory items, and remove it from the database
